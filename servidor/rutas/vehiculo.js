@@ -1,0 +1,32 @@
+import express from "express";
+import {
+  getVehiculoPorId,
+  getVehiculos,
+} from "../../bd/controladores/vehiculo.js";
+
+const router = express.Router();
+
+router.get("/vehiculos", async (req, res, next) => {
+  try {
+    const listadoVehiculos = await getVehiculos();
+
+    res.json({ listadoVehiculos });
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = 500;
+    return next(err.codigo ? err : error);
+  }
+});
+router.get("/vehiculo/:idVehiculo", async (req, res, next) => {
+  try {
+    const { idVehiculo } = req.params;
+    const vehiculoEncontrado = await getVehiculoPorId(idVehiculo);
+    res.json({ vehiculoEncontrado });
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = 500;
+    return next(err.codigo ? err : error);
+  }
+});
+
+export default router;
