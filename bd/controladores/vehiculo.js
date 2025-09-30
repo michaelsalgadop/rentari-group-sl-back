@@ -3,7 +3,7 @@ import { vehiculos } from "../schemas/Vehiculo.js";
 const getVehiculos = async () => {
   try {
     const listado = await vehiculos
-      .find({ id_usuario: null })
+      .find({ id_usuario: null, estado: "disponible" })
       .populate("tipo_vehiculo_id", "tipo -_id") // quitamos el _id de tipoVehiculo y nos devuelve solo el tipo
       .populate("combustible_id", "tipo -_id");
     const listaVehiculos = listado.map(
@@ -89,4 +89,62 @@ const getVehiculoPorId = async (idVehiculo) => {
     throw nuevoError;
   }
 };
-export { getVehiculos, getVehiculoPorId };
+const reservarVehiculo = async (idVehiculo) => {
+  try {
+    const vehiculoReservado = await vehiculos.findByIdAndUpdate(idVehiculo, {
+      estado: "reservado",
+      reservadoHasta: Date.now() + 1 * 60 * 1000,
+    });
+    if (!vehiculoReservado) {
+      const nuevoError = new Error(
+        `No se ha podido reservar el vehiculo solicitado.`
+      );
+      nuevoError.codigo = 500;
+      throw nuevoError;
+    }
+    return true;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se ha podido reservar ningún vehiculo: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
+const liberarVehiculos = async () => {
+  try {
+    const result = await vehiculos.updateMany(
+      { estado: "reservado", reservadoHasta: { $lte: new Date() } },
+      { $set: { estado: "disponible", reservadoHasta: null } }
+    );
+    return result;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se ha podido liberar ningún vehiculo: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
+const alquilarVehiculo = async (idUsuario, idVehiculo) => {
+  try {
+    const result = await vehiculos.findByIdAndUpdate(idVehiculo, {
+      $set: {
+        id_usuario: idUsuario,
+        estado: "alquilado",
+        reservadoHasta: null,
+      },
+    });
+    return result;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se ha podido liberar ningún vehiculo: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
+export {
+  getVehiculos,
+  getVehiculoPorId,
+  reservarVehiculo,
+  liberarVehiculos,
+  alquilarVehiculo,
+};

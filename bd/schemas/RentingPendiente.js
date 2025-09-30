@@ -7,14 +7,26 @@ const rentingPendienteSchema = new Schema({
     required: true,
   },
   session_id: {
-    type: String, // viene de tu cookie (UUID generado con crypto)
+    type: String, // viene de la cookie (UUID generado con crypto)
     required: true,
     index: true,
+  },
+  meses: {
+    type: Number,
+    required: true,
+  },
+  cuota: {
+    type: Number,
+    required: true,
+  },
+  total: {
+    type: Number,
+    required: true,
   },
   creadoEn: {
     type: Date,
     default: Date.now,
-    index: { expires: 300 }, // 5 minutos
+    index: { expires: 900 }, // 15 minutos
   },
 });
 

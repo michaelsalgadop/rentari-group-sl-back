@@ -43,6 +43,12 @@ const vehiculoSchema = new Schema({
     type: String,
     required: true,
   },
+  estado: {
+    type: String,
+    enum: ["disponible", "reservado", "alquilado"],
+    default: "disponible",
+  },
+  reservadoHasta: Date, // opcional, para caducar reservas
 });
 const vehiculos = model("vehiculos", vehiculoSchema, "vehiculos");
 

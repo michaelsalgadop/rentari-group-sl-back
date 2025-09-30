@@ -44,4 +44,45 @@ const eliminarPresupuesto = async (idUsuario) => {
     throw error.codigo ? error : nuevoError;
   }
 };
-export { getPresupuestoUsuario, crearNuevoPresupuesto, eliminarPresupuesto };
+const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
+  try {
+    const { id_vehiculo, meses, cuota, total, idUsuario } = datosPresupuesto;
+    const presupuestoModificado = await presupuestos.findOneAndUpdate(
+      {
+        id_usuario: idUsuario,
+      },
+      {
+        $inc: { total_rentings: 1, gasto_total: total, gasto_mensual: cuota },
+        $push: {
+          coches_rentados: {
+            id_vehiculo,
+            fecha_inicio: new Date(),
+            fecha_fin: null,
+            precio_mensual: cuota,
+            meses,
+            coste_total: total,
+            km_contratados_anyo: 20000,
+            km_extra_contratados: 0,
+            costes_extra: 0,
+          },
+        },
+        fecha_ultimo_renting: new Date(),
+      }
+    );
+    if (!presupuestoModificado) {
+      const nuevoError = new Error(`No se pudo modificar el vehículo.`);
+      nuevoError.codigo = 500;
+      throw nuevoError;
+    }
+    return presupuestoModificado;
+  } catch (error) {
+    const nuevoError = new Error("No se ha podido modificar el presupuesto");
+    throw error.codigo ? error : nuevoError;
+  }
+};
+export {
+  getPresupuestoUsuario,
+  crearNuevoPresupuesto,
+  eliminarPresupuesto,
+  agregarVehiculoAlPresupuesto,
+};
