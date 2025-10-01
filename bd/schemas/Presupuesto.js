@@ -31,6 +31,7 @@ const presupuestoSchema = new Schema({
       },
       fecha_fin: {
         type: Date,
+        required: true,
       },
       precio_mensual: {
         type: Number,
