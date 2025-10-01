@@ -141,10 +141,25 @@ const alquilarVehiculo = async (idUsuario, idVehiculo) => {
     throw nuevoError;
   }
 };
+const desvincularVehiculosDeUsuario = async (idUsuario) => {
+  try {
+    const result = await vehiculos.updateMany(
+      { id_usuario: idUsuario },
+      { $set: { estado: "disponible", id_usuario: null } }
+    );
+    return result;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se ha podido liberar ningún vehiculo: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
 export {
   getVehiculos,
   getVehiculoPorId,
   reservarVehiculo,
   liberarVehiculos,
   alquilarVehiculo,
+  desvincularVehiculosDeUsuario,
 };

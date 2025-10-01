@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import {
   checkearExisteUsuario,
   crearUsuario,
+  desactivarAnonimizarUsuario,
   eliminarUsuario,
   getUsuario,
   listarDatosUsuario,
@@ -12,9 +13,12 @@ import {
   crearNuevoPresupuesto,
   eliminarPresupuesto,
   getPresupuestoUsuario,
+  hayRentingsActivos,
+  MODOS_RENTING,
 } from "../../bd/controladores/presupuesto.js";
 import { crearCodigoVerificacion } from "../../bd/controladores/codigoVerificacion.js";
 import { enviarCorreo } from "../../nodemailer/email.js";
+import { desvincularVehiculosDeUsuario } from "../../bd/controladores/vehiculo.js";
 const router = express.Router();
 
 router.put("/login", async (req, res, next) => {
@@ -111,14 +115,37 @@ router.get("/profile", authMiddleware, async (req, res, next) => {
 
 router.delete("/eliminar", authMiddleware, async (req, res, next) => {
   try {
-    const usuarioEliminado = await eliminarUsuario(req.idUsuario);
-    const presupuestoEliminado = await eliminarPresupuesto(req.idUsuario);
-    res.json({
-      respuesta:
-        usuarioEliminado && presupuestoEliminado
-          ? "Usuario eliminado correctamente!"
-          : "Ha habido algún error eliminando el usuario.",
-    });
+    const idUsuario = req.idUsuario;
+    const respuesta = await hayRentingsActivos(idUsuario);
+    if (respuesta === MODOS_RENTING.HAY_ACTIVOS) {
+      const error = new Error(
+        `No puede eliminar el usuario porque tiene rentings activos`
+      );
+      error.status = 400;
+      return next(error);
+    } else if (respuesta === MODOS_RENTING.HA_HABIDO) {
+      const usuarioDesactivado = await desactivarAnonimizarUsuario(
+        req.idUsuario
+      );
+      const vehiculosDesvinculados = await desvincularVehiculosDeUsuario(
+        req.idUsuario
+      );
+      res.json({
+        respuesta:
+          usuarioDesactivado && vehiculosDesvinculados
+            ? "Tu usuario quedó desactivado, en un futuro habrá una opción para recuperarlo, de momento está registrado pero desactivado!"
+            : "Ha habido algún error desactivando el usuario.",
+      });
+    } else {
+      const usuarioEliminado = await eliminarUsuario(req.idUsuario);
+      const presupuestoEliminado = await eliminarPresupuesto(req.idUsuario);
+      res.json({
+        respuesta:
+          usuarioEliminado && presupuestoEliminado
+            ? "Usuario eliminado correctamente!"
+            : "Ha habido algún error eliminando el usuario.",
+      });
+    }
   } catch (err) {
     const error = new Error(err.message);
     error.status = err.codigo || 500;

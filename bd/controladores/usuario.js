@@ -74,6 +74,51 @@ const eliminarUsuario = async (idUsuario) => {
   }
 };
 
+const desactivarAnonimizarUsuario = async (idUsuario) => {
+  try {
+    const usuarioDesactivado = await usuarios.findOneAndUpdate(
+      {
+        _id: idUsuario,
+      },
+      [
+        /**
+         * usando pipeline de actualización (Mongo >= 4.2)
+         * $$NOW se usa para asignar la fecha actual
+         * Estamos usando un pipeline de actualización ([ {...} ]) que permite usar los valores
+         * del documento ($_id, etc.) dentro de la actualización.
+         * Esto hace que el correo y el nombre de usuario se anonimicen automáticamente usando el _id
+         * del usuario, todo en un solo paso.
+         */
+        {
+          $set: {
+            activo: false,
+            deletedAt: "$$NOW",
+            nombreUsuario: {
+              $concat: ["usuario_eliminado_", { $toString: "$_id" }],
+            },
+            correo: {
+              $concat: ["deleted_", { $toString: "$_id" }, "@rentari.com"],
+            },
+            contrasenya: null,
+          },
+        },
+      ],
+      { new: true } // devuelve el documento actualizado
+    );
+    return usuarioDesactivado;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se ha podido desactivar el usuario: ${error.message}`
+    );
+    if (error.name === "ValidationError") {
+      nuevoError.codigo = 400;
+    } else {
+      nuevoError.codigo = 500;
+    }
+    throw nuevoError;
+  }
+};
+
 const listarDatosUsuario = async (idUsuario) => {
   try {
     const usuarioEncontrado = await usuarios.findById(idUsuario);
@@ -103,5 +148,6 @@ export {
   checkearExisteUsuario,
   crearUsuario,
   eliminarUsuario,
+  desactivarAnonimizarUsuario,
   listarDatosUsuario,
 };

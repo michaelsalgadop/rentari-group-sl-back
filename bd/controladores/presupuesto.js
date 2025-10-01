@@ -1,4 +1,9 @@
 import { Presupuesto as presupuestos } from "../schemas/Presupuesto.js";
+const MODOS_RENTING = {
+  NO_HAY: 0,
+  HAY_ACTIVOS: 1,
+  HA_HABIDO: 2,
+};
 const getPresupuestoUsuario = async (idUsuario) => {
   try {
     const presupuestoEncontrado = await presupuestos.findOne({
@@ -47,6 +52,9 @@ const eliminarPresupuesto = async (idUsuario) => {
 const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
   try {
     const { id_vehiculo, meses, cuota, total, idUsuario } = datosPresupuesto;
+    const fechaActual = new Date();
+    const fechaFinRenting = new Date(fechaActual);
+    fechaFinRenting.setMonth(fechaFinRenting.getMonth() + parseInt(meses));
     const presupuestoModificado = await presupuestos.findOneAndUpdate(
       {
         id_usuario: idUsuario,
@@ -56,8 +64,8 @@ const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
         $push: {
           coches_rentados: {
             id_vehiculo,
-            fecha_inicio: new Date(),
-            fecha_fin: null,
+            fecha_inicio: fechaActual,
+            fecha_fin: fechaFinRenting,
             precio_mensual: cuota,
             meses,
             coste_total: total,
@@ -80,9 +88,42 @@ const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
     throw error.codigo ? error : nuevoError;
   }
 };
+const hayRentingsActivos = async (idUsuario) => {
+  try {
+    const presupuestoUsuario = await presupuestos.findOne({
+      id_usuario: idUsuario,
+    });
+    if (!presupuestoUsuario) {
+      const nuevoError = new Error(
+        `No se encontró la ficha del usuario al revisar rentings activos.`
+      );
+      nuevoError.codigo = 500;
+      throw nuevoError;
+    }
+    if (presupuestoUsuario.coches_rentados?.length === 0)
+      return MODOS_RENTING.NO_HAY;
+
+    const fechaRentingMasAlta = Math.max(
+      ...presupuestoUsuario.coches_rentados.map(({ fecha_fin }) =>
+        new Date(fecha_fin).getTime()
+      )
+    );
+    return fechaRentingMasAlta >= new Date().getTime()
+      ? MODOS_RENTING.HAY_ACTIVOS
+      : MODOS_RENTING.HA_HABIDO;
+  } catch (error) {
+    const nuevoError = new Error(
+      "No se ha podido comprobar si habían rentings activos"
+    );
+    throw error.codigo ? error : nuevoError;
+  }
+};
+
 export {
   getPresupuestoUsuario,
   crearNuevoPresupuesto,
   eliminarPresupuesto,
   agregarVehiculoAlPresupuesto,
+  hayRentingsActivos,
+  MODOS_RENTING,
 };
