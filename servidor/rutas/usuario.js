@@ -1,5 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import { check, checkSchema } from "express-validator";
 import {
   checkearExisteUsuario,
   crearUsuario,
@@ -21,7 +22,7 @@ import { enviarCorreo } from "../../nodemailer/email.js";
 import { desvincularVehiculosDeUsuario } from "../../bd/controladores/vehiculo.js";
 const router = express.Router();
 
-router.put("/login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   try {
     const credencialesUsuario = req.body;
 
@@ -32,9 +33,7 @@ router.put("/login", async (req, res, next) => {
       usuarioEncontrado.contrasenya
     );
     if (!coincideContrasenya) {
-      const error = new Error(
-        `La contraseña no coincide con la del nombre de usuario guardado!`
-      );
+      const error = new Error(`Email o contraseña incorrectos!`);
       error.status = 403;
       return next(error);
     }

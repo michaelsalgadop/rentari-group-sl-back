@@ -8,6 +8,7 @@ const createCookies = (req, res, next) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
       path: "/",
+      maxAge: 1000 * 60 * 20, //La cookie caduca en 20 minutos
     });
     req.sessionId = sessionId;
   } else {

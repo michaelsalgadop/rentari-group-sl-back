@@ -9,7 +9,7 @@ const codigosVerificacionSchema = new Schema({
     type: Number,
     required: true,
   },
-  creadoEn: { type: Date, default: Date.now, index: { expires: 300 } }, // 5 min
+  creadoEn: { type: Date, default: Date.now, index: { expires: 900 } }, // 15 min
 });
 const CodigosVerificacion = model(
   "CodigosVerificacion",

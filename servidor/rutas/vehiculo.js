@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  filtrarVehiculos,
   getVehiculoPorId,
   getVehiculos,
 } from "../../bd/controladores/vehiculo.js";
@@ -28,5 +29,15 @@ router.get("/vehiculo/:idVehiculo", async (req, res, next) => {
     return next(err.codigo ? err : error);
   }
 });
-
+router.get("/vehiculos/filter", async (req, res, next) => {
+  try {
+    const datosFiltro = req.query;
+    const listadoVehiculos = await filtrarVehiculos(datosFiltro);
+    res.json({ listadoVehiculos });
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = 500;
+    return next(err.codigo ? err : error);
+  }
+});
 export default router;
