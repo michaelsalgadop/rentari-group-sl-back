@@ -6,9 +6,7 @@ const getUsuario = async (correo) => {
       correo: correo,
     });
     if (!usuarioEncontrado) {
-      const nuevoError = new Error(
-        `No hay ningún usuario en la base de datos con el correo ${correo}.`
-      );
+      const nuevoError = new Error(`Email o contraseña incorrectos!`);
       nuevoError.codigo = 404;
       throw nuevoError;
     }

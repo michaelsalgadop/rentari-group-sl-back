@@ -58,7 +58,7 @@ router.post("/pending", async (req, res, next) => {
       ok: vehiculoReservado,
       messageTitle: "Reserva realizada.",
       messageBody:
-        "Debes iniciar sesión o registrarte para continuar con la operación. Tienes un plazo de 15 minutos para hacerlo, de lo contrario el vehículo volverá a estar disponible en el mercado.",
+        "Debes iniciar sesión o registrarte para continuar con la operación. Tienes un plazo de unos 15 minutos aproximadamente para hacerlo, de lo contrario el vehículo volverá a estar disponible en el mercado.",
     });
   } catch (err) {
     const error = new Error(err.message);

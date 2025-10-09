@@ -93,7 +93,8 @@ const reservarVehiculo = async (idVehiculo) => {
   try {
     const vehiculoReservado = await vehiculos.findByIdAndUpdate(idVehiculo, {
       estado: "reservado",
-      reservadoHasta: Date.now() + 1 * 60 * 1000,
+      // Establecemos fecha límite de 15 minutos. En la próxima vuelta de Cors, se eliminará
+      reservadoHasta: new Date(Date.now() + 15 * 60 * 1000), // Date.now() no acepta argumentos dentro, debe ser new Date(argumentos...)
     });
     if (!vehiculoReservado) {
       const nuevoError = new Error(
@@ -155,6 +156,83 @@ const desvincularVehiculosDeUsuario = async (idUsuario) => {
     throw nuevoError;
   }
 };
+const filtrarVehiculos = async (datosFiltro) => {
+  try {
+    const { buscadorVehiculos, kilometros, orden, precio, anyo } = datosFiltro;
+    const filtros = {
+      id_usuario: null,
+      estado: "disponible",
+      ...(buscadorVehiculos && {
+        nombre: new RegExp(buscadorVehiculos, "i"),
+      }), // <== búsqueda parcial por nombre
+      ...(anyo && { anio: { $gte: Number(anyo) } }),
+      ...(precio && { precio_renting: { $lte: Number(precio) } }),
+      ...(kilometros && { kilometraje: { $gte: Number(kilometros) } }),
+    };
+    let findOrder = orden;
+    switch (findOrder) {
+      case "nuevosCoches":
+        findOrder = [["anio", -1]];
+        break;
+      case "menosKm":
+        findOrder = "kilometraje";
+        break;
+      case "masKm":
+        findOrder = [["kilometraje", -1]];
+        break;
+      case "rentingsBajos":
+        findOrder = "precio_renting";
+        break;
+      case "rentingsAltos":
+        findOrder = [["precio_renting", -1]];
+        break;
+      default:
+        findOrder = "_id";
+        break;
+    }
+    const listado = await vehiculos
+      .find(filtros)
+      .populate("tipo_vehiculo_id", "tipo -_id") // quitamos el _id de tipoVehiculo y nos devuelve solo el tipo
+      .populate("combustible_id", "tipo -_id")
+      .sort(findOrder);
+    const listaVehiculos = listado.map(
+      ({
+        _id,
+        nombre,
+        anio,
+        precio_renting,
+        kilometraje,
+        cv,
+        imagen,
+        tipo_vehiculo_id,
+        combustible_id,
+      }) => ({
+        _id,
+        nombre,
+        anyo: anio,
+        precio: precio_renting,
+        kilometros: kilometraje,
+        cv,
+        urlImagen: imagen,
+        tipoVehiculo: tipo_vehiculo_id?.tipo, // por si acaso viene alguno sin haberse asignado bien el id de tipo vehiculo
+        combustible: combustible_id?.tipo, // lo mismo que tipo de vehiculo
+      })
+    );
+    if (listaVehiculos?.length === 0) {
+      const nuevoError = new Error(
+        `No hay ningún vehiculo de esas características.`
+      );
+      nuevoError.codigo = 404;
+      throw nuevoError;
+    }
+    return listaVehiculos;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se ha podido filtrar ningún vehiculo: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
 export {
   getVehiculos,
   getVehiculoPorId,
@@ -162,4 +240,5 @@ export {
   liberarVehiculos,
   alquilarVehiculo,
   desvincularVehiculosDeUsuario,
+  filtrarVehiculos,
 };
