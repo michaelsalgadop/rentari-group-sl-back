@@ -233,6 +233,74 @@ const filtrarVehiculos = async (datosFiltro) => {
     throw nuevoError;
   }
 };
+const getLlavesVehiculos = async () => {
+  try {
+    const result = await vehiculos.aggregate([
+      {
+        $project: {
+          data: { $objectToArray: "$$ROOT" },
+        },
+      },
+      { $project: { data: "$data.k" } },
+      { $unwind: "$data" },
+      {
+        $group: {
+          _id: null,
+          keys: { $addToSet: "$data" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          keys: 1,
+        },
+      },
+    ]);
+    if (!result || result?.length === 0) {
+      const nuevoError = new Error(
+        `Error en la comprobación de campos. Consulte con el departamento técnico.`
+      );
+      nuevoError.codigo = 500;
+      throw nuevoError;
+    }
+    const clavesVehiculos = result[0].keys
+      .filter(
+        (key) =>
+          key !== "_id" &&
+          key !== "id_usuario" &&
+          key !== "estado" &&
+          key !== "reservadoHasta" &&
+          key !== "imagen"
+      )
+      .map((key) => {
+        switch (key) {
+          case "combustible_id":
+            return "combustible";
+          case "precio_renting":
+            return "precio";
+          case "kilometraje":
+            return "kilometros";
+          case "tipo_vehiculo_id":
+            return "tipoVehiculo";
+          case "anio":
+            return "anyo";
+          case "kilometraje":
+            return "kilometros";
+          case "nombre":
+            return "buscadorVehiculos";
+          default:
+            return key;
+        }
+      });
+    clavesVehiculos.push("orden");
+    return clavesVehiculos;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se han podido realizar validaciones: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
 export {
   getVehiculos,
   getVehiculoPorId,
@@ -241,4 +309,5 @@ export {
   alquilarVehiculo,
   desvincularVehiculosDeUsuario,
   filtrarVehiculos,
+  getLlavesVehiculos,
 };

@@ -15,6 +15,7 @@ import { liberarVehiculos } from "../bd/controladores/vehiculo.js";
 
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
 const isProd = process.env.NODE_ENV === "production";
+
 app.use(morgan("dev"));
 app.use(
   cors({
@@ -40,9 +41,11 @@ app.use(
   })
 );
 app.use(express.static("public"));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(createCookies);
+
 // Tarea: cada 15 minutos libera vehículos cuyo reservadoHasta ya expiró
 cron.schedule("*/15 * * * *", async () => {
   try {
@@ -53,6 +56,7 @@ cron.schedule("*/15 * * * *", async () => {
     console.error("Error liberando vehículos:", err);
   }
 });
+
 app.use("/usuarios", rutasUsuarios);
 app.use("/search", rutasVehiculos);
 app.use("/rentings", rutasRentings);
