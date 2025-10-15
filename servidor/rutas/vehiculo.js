@@ -46,7 +46,6 @@ router.get(
   async (req, res, next) => {
     try {
       const datosFiltro = req.query;
-      console.log(req.query);
       const listadoVehiculos = await filtrarVehiculos(datosFiltro);
       res.json({ listadoVehiculos });
     } catch (err) {
