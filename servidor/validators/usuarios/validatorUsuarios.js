@@ -1,16 +1,13 @@
-import { query, param } from "express-validator";
+import { body } from "express-validator";
 import {
   mensajeParametrosNoPermitidos,
   testGeneral,
   rastrearClaveInvalida,
 } from "../validatorInjection.js";
-import {
-  anyoValido,
-  isNumberFilter,
-  noInjection,
-} from "../validatorGeneral.js";
+import { noInjection } from "../validatorGeneral.js";
 import { getLlavesVehiculos } from "../../../bd/controladores/vehiculo.js";
-const testCamposValidosVehiculos = async (peticion) => {
+
+const testCamposValidosUsuarios = async (peticion) => {
   try {
     const clavesValidas = await getLlavesVehiculos();
     return rastrearClaveInvalida(peticion, clavesValidas);
@@ -18,16 +15,18 @@ const testCamposValidosVehiculos = async (peticion) => {
     throw new Error(error.message);
   }
 };
-const queryValidaVehiculos = query().custom(async (_, { req }) => {
-  const peticion = req.query;
+
+const bodyValidaUsuarios = body().custom(async (_, { req }) => {
+  const peticion = req.body;
   if (testGeneral(peticion)) {
-    if (await testCamposValidosVehiculos(peticion))
+    if (await testCamposValidosUsuarios(peticion))
       throw new Error(mensajeParametrosNoPermitidos);
   }
   return true;
 });
-const validateVehiculoFilter = [
-  queryValidaVehiculos,
+
+const validateUsuariosRegistro = [
+  bodyValidaUsuarios,
   query("buscadorVehiculos")
     .optional()
     .custom(noInjection)
