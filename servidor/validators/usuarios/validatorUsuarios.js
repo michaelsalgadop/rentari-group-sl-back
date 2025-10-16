@@ -4,12 +4,23 @@ import {
   testGeneral,
   rastrearClaveInvalida,
 } from "../validatorInjection.js";
-import { noInjection } from "../validatorGeneral.js";
-import { getLlavesVehiculos } from "../../../bd/controladores/vehiculo.js";
-
-const testCamposValidosUsuarios = async (peticion) => {
+import {
+  contrasenyaValida,
+  correoValido,
+  nombreUsuarioValido,
+} from "../validatorGeneral.js";
+import { getLlavesUsuarios } from "../../../bd/controladores/usuario.js";
+let clavesValidas = [];
+(async () => {
   try {
-    const clavesValidas = await getLlavesVehiculos();
+    clavesValidas = await getLlavesUsuarios();
+    console.log("Claves de usuario cargadas:", clavesValidas);
+  } catch (error) {
+    console.error("Error cargando claves:", error.message);
+  }
+})();
+const testCamposValidosUsuarios = (peticion) => {
+  try {
     return rastrearClaveInvalida(peticion, clavesValidas);
   } catch (error) {
     throw new Error(error.message);
@@ -18,49 +29,44 @@ const testCamposValidosUsuarios = async (peticion) => {
 
 const bodyValidaUsuarios = body().custom(async (_, { req }) => {
   const peticion = req.body;
-  if (testGeneral(peticion)) {
-    if (await testCamposValidosUsuarios(peticion))
-      throw new Error(mensajeParametrosNoPermitidos);
-  }
+  // testGeneral ya lanza sus propios errores si algo va mal (inyección, etc.)
+  testGeneral(peticion);
+  // Si las claves actuales son válidas, todo bien
+  if (!testCamposValidosUsuarios(peticion)) return true;
+  // Si detecta claves inválidas, recarga desde BD y reintenta
+  clavesValidas = await getLlavesUsuarios();
+  if (testCamposValidosUsuarios(peticion))
+    throw new Error(mensajeParametrosNoPermitidos);
   return true;
 });
 
 const validateUsuariosRegistro = [
   bodyValidaUsuarios,
-  query("buscadorVehiculos")
-    .optional()
-    .custom(noInjection)
-    .withMessage("El valor del buscador contiene caracteres no permitidos"),
-  query("precio")
-    .optional()
-    .custom(isNumberFilter)
-    .withMessage("El valor del precio no es numérico"),
-  query("kilometros")
-    .optional()
-    .custom(isNumberFilter)
-    .withMessage("El valor de kilómetros no es numérico"),
-  query("anyo")
-    .optional()
-    .custom(anyoValido)
-    .withMessage("El valor de años no es correcto"),
-  query("orden")
-    .optional()
-    .isString()
-    .isIn([
-      "nuevosCoches",
-      "menosKm",
-      "masKm",
-      "rentingsBajos",
-      "rentingsAltos",
-      "",
-    ])
-    .withMessage("Ordenación no reconocida"),
+  body("correo").custom(correoValido).withMessage("Correo no es válido!"),
+  body("nombreUsuario")
+    .custom(nombreUsuarioValido)
+    .withMessage("Nombre de usuario no es válido!"),
+  body("contrasenya")
+    .custom(contrasenyaValida)
+    .withMessage("Contraseña no es válida!"),
+];
+const validateUsuarios = [
+  bodyValidaUsuarios,
+  body("correo").custom(correoValido).withMessage("Correo no es válido!"),
+  body("contrasenya")
+    .custom(contrasenyaValida)
+    .withMessage("Contraseña no es válida!"),
 ];
 
-const validateVehiculoId = [
-  param("idVehiculo")
-    .exists()
-    .isMongoId()
-    .withMessage("ID de vehículo no válido"),
+const validateValidacionUsuarios = [
+  bodyValidaUsuarios,
+  body("correo").custom(correoValido).withMessage("Correo no es válido!"),
+  body("nombreUsuario")
+    .custom(nombreUsuarioValido)
+    .withMessage("Nombre de usuario no es válido!"),
 ];
-export { validateVehiculoFilter, validateVehiculoId };
+export {
+  validateUsuariosRegistro,
+  validateUsuarios,
+  validateValidacionUsuarios,
+};

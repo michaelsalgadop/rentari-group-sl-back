@@ -141,6 +141,53 @@ const listarDatosUsuario = async (idUsuario) => {
   }
 };
 
+const getLlavesUsuarios = async () => {
+  try {
+    const result = await usuarios.aggregate([
+      {
+        $project: {
+          data: { $objectToArray: "$$ROOT" },
+        },
+      },
+      { $project: { data: "$data.k" } },
+      { $unwind: "$data" },
+      {
+        $group: {
+          _id: null,
+          keys: { $addToSet: "$data" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          keys: 1,
+        },
+      },
+    ]);
+    if (!result || result?.length === 0) {
+      const nuevoError = new Error(
+        `Error en la comprobación de campos. Consulte con el departamento técnico.`
+      );
+      nuevoError.codigo = 500;
+      throw nuevoError;
+    }
+    const clavesUsuarios = result[0].keys.filter(
+      (key) =>
+        key !== "_id" &&
+        key !== "role" &&
+        key !== "activo" &&
+        key !== "deletedAt" &&
+        key !== "__v"
+    );
+    return clavesUsuarios;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se han podido realizar validaciones: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
+
 export {
   getUsuario,
   checkearExisteUsuario,
@@ -148,4 +195,5 @@ export {
   eliminarUsuario,
   desactivarAnonimizarUsuario,
   listarDatosUsuario,
+  getLlavesUsuarios,
 };
