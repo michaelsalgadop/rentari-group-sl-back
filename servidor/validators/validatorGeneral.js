@@ -22,4 +22,34 @@ const anyoValido = (valor) => {
   const valorNumerico = parseInt(valor);
   return valorNumerico === 0 || valorNumerico <= new Date().getFullYear();
 };
-export { queryParamVacio, esObjeto, noInjection, isNumberFilter, anyoValido };
+
+const correoValido = (valor) => {
+  if (queryParamVacio(valor)) return false;
+  if (esObjeto(valor) || typeof valor !== "string") return false; // no aplica si no es string
+  const regexValido =
+    /^[a-zA-Z0-9._%+-]+@(outlook|gmail|yahoo|hotmail){1}\.[a-zA-Z]{2,}$/;
+  return regexValido.test(valor);
+};
+const nombreUsuarioValido = (valor) => {
+  if (queryParamVacio(valor)) return false;
+  if (esObjeto(valor) || typeof valor !== "string") return false; // no aplica si no es string
+  const regexValido = /^[a-zA-Z0-9_-]{3,20}$/;
+  return regexValido.test(valor);
+};
+const contrasenyaValida = (valor) => {
+  if (queryParamVacio(valor)) return false;
+  if (esObjeto(valor) || typeof valor !== "string") return false; // no aplica si no es string
+  const regexValido =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!¡%*&])[A-Za-z\d@$!¡%*&]{8,}$/;
+  return regexValido.test(valor);
+};
+export {
+  queryParamVacio,
+  esObjeto,
+  noInjection,
+  isNumberFilter,
+  anyoValido,
+  correoValido,
+  nombreUsuarioValido,
+  contrasenyaValida,
+};

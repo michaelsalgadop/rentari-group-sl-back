@@ -10,9 +10,17 @@ import {
   noInjection,
 } from "../validatorGeneral.js";
 import { getLlavesVehiculos } from "../../../bd/controladores/vehiculo.js";
-const testCamposValidosVehiculos = async (peticion) => {
+let clavesValidas = [];
+(async () => {
   try {
-    const clavesValidas = await getLlavesVehiculos();
+    clavesValidas = await getLlavesVehiculos();
+    console.log("Claves de vehiculo cargadas:", clavesValidas);
+  } catch (error) {
+    console.error("Error cargando claves:", error.message);
+  }
+})();
+const testCamposValidosVehiculos = (peticion) => {
+  try {
     return rastrearClaveInvalida(peticion, clavesValidas);
   } catch (error) {
     throw new Error(error.message);
@@ -20,10 +28,14 @@ const testCamposValidosVehiculos = async (peticion) => {
 };
 const queryValidaVehiculos = query().custom(async (_, { req }) => {
   const peticion = req.query;
-  if (testGeneral(peticion)) {
-    if (await testCamposValidosVehiculos(peticion))
-      throw new Error(mensajeParametrosNoPermitidos);
-  }
+  // testGeneral ya lanza sus propios errores si algo va mal (inyección, etc.)
+  testGeneral(peticion);
+  // Si las claves actuales son válidas, todo bien
+  if (!testCamposValidosVehiculos(peticion)) return true;
+  // Si detecta claves inválidas, recarga desde BD y reintenta
+  clavesValidas = await getLlavesVehiculos();
+  if (testCamposValidosVehiculos(peticion))
+    throw new Error(mensajeParametrosNoPermitidos);
   return true;
 });
 const validateVehiculoFilter = [
