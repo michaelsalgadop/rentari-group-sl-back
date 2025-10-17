@@ -12,11 +12,15 @@ import rutasRentings from "./rutas/renting.js";
 import { error404, errorGeneral } from "./errores.js";
 import { createCookies } from "../utils/cookies.js";
 import { liberarVehiculos } from "../bd/controladores/vehiculo.js";
+import { globalLimiter, authLimiter } from "../utils/rateLimit.js";
 
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
 const isProd = process.env.NODE_ENV === "production";
 
 app.use(morgan("dev"));
+// Render usa proxy -> activa cabeceras reales del cliente
+// Para que Express use la IP real del cliente (no la del proxy de Render).
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: FRONTEND_ORIGIN,
@@ -40,9 +44,14 @@ app.use(
     hsts: isProd, // solo activa HTTPS forzado en prod
   })
 );
+
 app.use(express.static("public"));
 
+// Limitar antes del parseo para filtrar bots o ataques
+app.use(globalLimiter);
+
 app.use(express.json());
+
 app.use(cookieParser());
 app.use(createCookies);
 
@@ -57,7 +66,7 @@ cron.schedule("*/15 * * * *", async () => {
   }
 });
 
-app.use("/usuarios", rutasUsuarios);
+app.use("/usuarios", authLimiter, rutasUsuarios);
 app.use("/search", rutasVehiculos);
 app.use("/rentings", rutasRentings);
 
