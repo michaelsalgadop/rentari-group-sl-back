@@ -47,8 +47,54 @@ const eliminarRentingTemporal = async (session_id) => {
     throw nuevoError;
   }
 };
+const getLlavesRentings = async () => {
+  try {
+    const result = await RentingPendiente.aggregate([
+      {
+        $project: {
+          data: { $objectToArray: "$$ROOT" },
+        },
+      },
+      { $project: { data: "$data.k" } },
+      { $unwind: "$data" },
+      {
+        $group: {
+          _id: null,
+          keys: { $addToSet: "$data" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          keys: 1,
+        },
+      },
+    ]);
+    if (!result || result?.length === 0) {
+      const nuevoError = new Error(
+        `Error en la comprobación de campos. Consulte con el departamento técnico.`
+      );
+      nuevoError.codigo = 500;
+      throw nuevoError;
+    }
+    const clavesRentings = result[0].keys
+      .filter(
+        (key) => key !== "session_id" && key !== "creadoEn" && key != "_id"
+      )
+      .map((key) => {
+        return key === "id_vehiculo" ? "idVehiculo" : key;
+      });
+    return clavesRentings;
+  } catch (error) {
+    const nuevoError = new Error(
+      `No se han podido realizar validaciones: ${error.message}`
+    );
+    throw nuevoError;
+  }
+};
 export {
   crearRentingPendiente,
   comprobarRentingsPendientes,
   eliminarRentingTemporal,
+  getLlavesRentings,
 };

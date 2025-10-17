@@ -17,6 +17,18 @@ const isNumberFilter = (valor) => {
   return queryParamVacio(valor) || !isNaN(parseInt(valor));
 };
 
+const isObligatoriIntNumber = (valor) => {
+  /* no se permiten arrays ni objetos*/
+  if (esObjeto(valor) || Array.isArray(valor)) return false;
+  return !isNaN(parseInt(valor));
+};
+
+const isObligatoriFloatNumber = (valor) => {
+  /* no se permiten arrays ni objetos*/
+  if (esObjeto(valor) || Array.isArray(valor)) return false;
+  return !isNaN(parseFloat(valor));
+};
+
 const anyoValido = (valor) => {
   if (esObjeto(valor) || isNaN(valor)) return false;
   const valorNumerico = parseInt(valor);
@@ -48,6 +60,8 @@ export {
   esObjeto,
   noInjection,
   isNumberFilter,
+  isObligatoriIntNumber,
+  isObligatoriFloatNumber,
   anyoValido,
   correoValido,
   nombreUsuarioValido,
