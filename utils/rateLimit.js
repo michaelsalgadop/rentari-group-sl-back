@@ -12,8 +12,8 @@ const globalLimiter = rateLimit({
 });
 // Límite estricto (login/register,...)
 const authLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 10 minutos
-  limit: 10, // máximo 5 intentos
+  windowMs: 5 * 60 * 1000, // 5 minutos
+  limit: 10, // máximo 10 intentos
   standardHeaders: true,
   legacyHeaders: false,
   message: {
