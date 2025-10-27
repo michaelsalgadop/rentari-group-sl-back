@@ -5,7 +5,6 @@ import {
   rastrearClaveInvalida,
 } from "../validatorInjection.js";
 import {
-  contrasenyaValida,
   correoValido,
   nombreUsuarioValido,
 } from "../validatorGeneral.js";
@@ -46,27 +45,5 @@ const validateUsuariosRegistro = [
   body("nombreUsuario")
     .custom(nombreUsuarioValido)
     .withMessage("Nombre de usuario no es válido!"),
-  body("contrasenya")
-    .custom(contrasenyaValida)
-    .withMessage("Contraseña no es válida!"),
 ];
-const validateUsuarios = [
-  bodyValidaUsuarios,
-  body("correo").custom(correoValido).withMessage("Correo no es válido!"),
-  body("contrasenya")
-    .custom(contrasenyaValida)
-    .withMessage("Contraseña no es válida!"),
-];
-
-const validateValidacionUsuarios = [
-  bodyValidaUsuarios,
-  body("correo").custom(correoValido).withMessage("Correo no es válido!"),
-  body("nombreUsuario")
-    .custom(nombreUsuarioValido)
-    .withMessage("Nombre de usuario no es válido!"),
-];
-export {
-  validateUsuariosRegistro,
-  validateUsuarios,
-  validateValidacionUsuarios,
-};
+export { validateUsuariosRegistro };

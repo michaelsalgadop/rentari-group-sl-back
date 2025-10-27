@@ -45,14 +45,7 @@ const correoValido = (valor) => {
 const nombreUsuarioValido = (valor) => {
   if (queryParamVacio(valor)) return false;
   if (esObjeto(valor) || typeof valor !== "string") return false; // no aplica si no es string
-  const regexValido = /^[a-zA-Z0-9_-]{3,20}$/;
-  return regexValido.test(valor);
-};
-const contrasenyaValida = (valor) => {
-  if (queryParamVacio(valor)) return false;
-  if (esObjeto(valor) || typeof valor !== "string") return false; // no aplica si no es string
-  const regexValido =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!¡%*&])[A-Za-z\d@$!¡%*&]{8,}$/;
+  const regexValido = /^[a-zA-Z0-9_-]{3,40}$/;
   return regexValido.test(valor);
 };
 export {
@@ -65,5 +58,4 @@ export {
   anyoValido,
   correoValido,
   nombreUsuarioValido,
-  contrasenyaValida,
 };

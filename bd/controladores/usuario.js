@@ -6,7 +6,7 @@ const getUsuario = async (correo) => {
       correo: correo,
     });
     if (!usuarioEncontrado) {
-      const nuevoError = new Error(`Email o contraseña incorrectos!`);
+      const nuevoError = new Error(`Email incorrecto!`);
       nuevoError.codigo = 404;
       throw nuevoError;
     }
@@ -97,7 +97,6 @@ const desactivarAnonimizarUsuario = async (idUsuario) => {
             correo: {
               $concat: ["deleted_", { $toString: "$_id" }, "@rentari.com"],
             },
-            contrasenya: null,
           },
         },
       ],

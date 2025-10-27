@@ -6,10 +6,6 @@ const usuarioSchema = new Schema({
     required: true,
     unique: true,
   },
-  contrasenya: {
-    type: String,
-    required: true,
-  },
   correo: {
     type: String,
     required: true,
