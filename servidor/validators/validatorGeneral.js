@@ -45,7 +45,7 @@ const correoValido = (valor) => {
 const nombreUsuarioValido = (valor) => {
   if (queryParamVacio(valor)) return false;
   if (esObjeto(valor) || typeof valor !== "string") return false; // no aplica si no es string
-  const regexValido = /^[a-zA-Z0-9_-]{3,40}$/;
+  const regexValido = /^[a-zA-Z0-9_-]+$/;
   return regexValido.test(valor);
 };
 export {
