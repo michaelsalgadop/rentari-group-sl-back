@@ -54,7 +54,11 @@ app.use(express.json());
 
 app.use(cookieParser());
 app.use(createCookies);
-
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  next();
+});
 // Tarea: cada 15 minutos libera vehículos cuyo reservadoHasta ya expiró
 cron.schedule("*/15 * * * *", async () => {
   try {
