@@ -69,7 +69,14 @@ cron.schedule("*/15 * * * *", async () => {
     console.error("Error liberando vehículos:", err);
   }
 });
-
+// Middleware utilizado para el monitoreo desde Pingtide cada 10 minutos
+app.get("/ping", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Monitoreo satisfactorio",
+    timestamp: new Date().toISOString(),
+  });
+});
 app.use("/usuarios", authLimiter, rutasUsuarios);
 app.use("/search", rutasVehiculos);
 app.use("/rentings", rutasRentings);
