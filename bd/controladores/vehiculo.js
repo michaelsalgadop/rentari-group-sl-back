@@ -1,5 +1,8 @@
 import { vehiculos } from "../schemas/Vehiculo.js";
-
+/**
+ * Obtener todos los vehiculos disponibles.
+ * @returns {Array} listado de vehiculos.
+ */
 const getVehiculos = async () => {
   try {
     const listado = await vehiculos
@@ -44,6 +47,11 @@ const getVehiculos = async () => {
     throw nuevoError;
   }
 };
+/**
+ * Obtener un vehiculo por su id.
+ * @param {ObjectId} idVehiculo ObjectId del vehiculo a obtener.
+ * @returns {Object} vehiculo con sus datos.
+ */
 const getVehiculoPorId = async (idVehiculo) => {
   try {
     const vehiculo = await vehiculos
@@ -89,6 +97,11 @@ const getVehiculoPorId = async (idVehiculo) => {
     throw nuevoError;
   }
 };
+/**
+ * Método para reservar un vehiculo hasta que sea confirmado.
+ * @param {ObjectId} idVehiculo ObjectId del vehiculo a reservar.
+ * @returns {Boolean} si el vehículo ha podido ser reservado.
+ */
 const reservarVehiculo = async (idVehiculo) => {
   try {
     const vehiculoReservado = await vehiculos.findByIdAndUpdate(idVehiculo, {
@@ -111,6 +124,10 @@ const reservarVehiculo = async (idVehiculo) => {
     throw nuevoError;
   }
 };
+/**
+ * Método para liberar un vehículo que estaba reservado y finalmente no fue alquilado.
+ * @returns {Object} vehículo liberado.
+ */
 const liberarVehiculos = async () => {
   try {
     const result = await vehiculos.updateMany(
@@ -125,6 +142,13 @@ const liberarVehiculos = async () => {
     throw nuevoError;
   }
 };
+/**
+ * Método para alquilar un vehículo con previa reserva o sin reservar en caso de que el usuario
+ * estuviera logueado/registrado.
+ * @param {ObjectId} idUsuario ObjectId del usuario que desea alquilar el vehículo.
+ * @param {ObjectId} idVehiculo ObjectId del vehículo a reservar.
+ * @returns {Object} vehículo alquilado.
+ */
 const alquilarVehiculo = async (idUsuario, idVehiculo) => {
   try {
     const result = await vehiculos.findByIdAndUpdate(idVehiculo, {
@@ -142,6 +166,11 @@ const alquilarVehiculo = async (idUsuario, idVehiculo) => {
     throw nuevoError;
   }
 };
+/**
+ * Método para desvincular vehiculos de un usuario que ha podido ser desactivado y anonimizado.
+ * @param {ObjectId} idUsuario ObjectId del usuario del cual desvincularemos sus vehículos.
+ * @returns {Array} listado de vehículos desvinculados.
+ */
 const desvincularVehiculosDeUsuario = async (idUsuario) => {
   try {
     const result = await vehiculos.updateMany(
@@ -156,6 +185,12 @@ const desvincularVehiculosDeUsuario = async (idUsuario) => {
     throw nuevoError;
   }
 };
+/**
+ * Método que nos devolverá un listado de vehículos, con los filtros que le hayamos pasado por parámetro.
+ * Entre los parámetros está la cadena de la lupa de vehículos, kilometros, orden, precio, anyo.
+ * @param {Object} datosFiltro filtro con los datos que queramos filtrar de los vehículos.
+ * @returns {Array} listado de vehículos con los filtros aplicados.
+ */
 const filtrarVehiculos = async (datosFiltro) => {
   try {
     const { buscadorVehiculos, kilometros, orden, precio, anyo } = datosFiltro;
@@ -233,6 +268,11 @@ const filtrarVehiculos = async (datosFiltro) => {
     throw nuevoError;
   }
 };
+/**
+ * Método para obtener las claves de la colección de vehículos.
+ * Ejemplo: id, nombre, anio,...
+ * @returns {Array} array con las claves de la colección.
+ */
 const getLlavesVehiculos = async () => {
   try {
     const result = await vehiculos.aggregate([

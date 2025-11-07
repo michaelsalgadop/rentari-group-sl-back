@@ -4,6 +4,12 @@ const MODOS_RENTING = {
   HAY_ACTIVOS: 1,
   HA_HABIDO: 2,
 };
+/**
+ * Lo utilizamos para devolver el presupuesto por el id de usuario proporcionado.
+ * @param {ObjectId} idUsuario se debe pasar un ObjectId válido de usuario. Si no se
+ * marcará como error.
+ * @returns {Object} objeto presupuesto del idUsuario indicado.
+ */
 const getPresupuestoUsuario = async (idUsuario) => {
   try {
     const presupuestoEncontrado = await presupuestos.findOne({
@@ -22,6 +28,11 @@ const getPresupuestoUsuario = async (idUsuario) => {
     throw error.codigo ? error : nuevoError;
   }
 };
+/**
+ * Método para crear un nuevo presupuesto al usuario indicado.
+ * @param {ObjectId} idUsuario un ObjectId de usuario válido.
+ * @returns {Object} presupuesto creado
+ */
 const crearNuevoPresupuesto = async (idUsuario) => {
   try {
     const presupuestoCreado = await presupuestos.create({
@@ -38,6 +49,11 @@ const crearNuevoPresupuesto = async (idUsuario) => {
     throw error.codigo ? error : nuevoError;
   }
 };
+/**
+ * Método para eliminar un presupuesto al usuario indicado.
+ * @param {ObjectId} idUsuario un ObjectId de usuario válido.
+ * @returns {Object} presupuesto eliminado
+ */
 const eliminarPresupuesto = async (idUsuario) => {
   try {
     const presupuestoEliminado = await presupuestos.findOneAndDelete({
@@ -49,6 +65,13 @@ const eliminarPresupuesto = async (idUsuario) => {
     throw error.codigo ? error : nuevoError;
   }
 };
+/**
+ * Método para agregar un vehiculo al presupuesto del usuario indicado.
+ * @param {Object} datosPresupuesto un objeto que contiene todos los datos
+ * necesarios para agregar un vehiculo al presupuesto del usuario.
+ * Entre ellos { id_vehiculo, meses, cuota, total, idUsuario }.
+ * @returns {Object} presupuesto modificado
+ */
 const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
   try {
     const { id_vehiculo, meses, cuota, total, idUsuario } = datosPresupuesto;
@@ -88,6 +111,14 @@ const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
     throw error.codigo ? error : nuevoError;
   }
 };
+/**
+ * Método para agregar un vehiculo al presupuesto del usuario indicado.
+ * @param {ObjectId} idUsuario ObjectId del usuario a comprobar.
+ * @returns {Number} Devuelve:
+ * - 0 Si no ha habido nunca rentings activos ni vencidos.
+ * - 1 Si hay rentings activos.
+ * - 2 Si los ha habido y ya no los hay.
+ */
 const hayRentingsActivos = async (idUsuario) => {
   try {
     const presupuestoUsuario = await presupuestos.findOne({

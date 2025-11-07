@@ -1,5 +1,9 @@
 import { Usuario as usuarios } from "../schemas/Usuario.js";
-
+/**
+ * Devuelve un usuario por el correo pasado por parámetro, en caso de que exista.
+ * @param {String} correo Correo de un usuario a comprobar.
+ * @returns {Object} Usuario encontrado.
+ */
 const getUsuario = async (correo) => {
   try {
     const usuarioEncontrado = await usuarios.findOne({
@@ -16,7 +20,11 @@ const getUsuario = async (correo) => {
     throw err.codigo ? err : nuevoError;
   }
 };
-
+/**
+ * Comprobar si existe el usuario a comprobar.
+ * @param {Object} usuario Usuario con mínimo nombre de usuario y correo.
+ * @returns {Object} usuario encontrado, en caso de haberlo encontrado.
+ */
 const checkearExisteUsuario = async (usuario) => {
   try {
     const usuarioEncontrado = await usuarios.findOne({
@@ -35,7 +43,11 @@ const checkearExisteUsuario = async (usuario) => {
     throw err.codigo ? err : nuevoError;
   }
 };
-
+/**
+ * Método para crear un usuario.
+ * @param {Object} usuario Usuario a crear.
+ * @returns {Object} usuario creado.
+ */
 const crearUsuario = async (usuario) => {
   try {
     const usuarioCreado = await usuarios.create(usuario);
@@ -52,7 +64,11 @@ const crearUsuario = async (usuario) => {
     throw nuevoError;
   }
 };
-
+/**
+ * Método para eliminar un usuario.
+ * @param {ObjectId} idUsuario ObjectId del usuario a eliminar.
+ * @returns {Object} usuario eliminado.
+ */
 const eliminarUsuario = async (idUsuario) => {
   try {
     const usuarioEliminado = await usuarios.findOneAndDelete({
@@ -71,7 +87,12 @@ const eliminarUsuario = async (idUsuario) => {
     throw nuevoError;
   }
 };
-
+/**
+ * Método para "anonimizar" usuario, el cual ha tenido rentings, pero ya vencieron
+ * y ha decidido eliminarlo.
+ * @param {ObjectId} idUsuario ObjectId del usuario a desactivar.
+ * @returns {Object} usuario desactivado.
+ */
 const desactivarAnonimizarUsuario = async (idUsuario) => {
   try {
     const usuarioDesactivado = await usuarios.findOneAndUpdate(
@@ -115,7 +136,11 @@ const desactivarAnonimizarUsuario = async (idUsuario) => {
     throw nuevoError;
   }
 };
-
+/**
+ * Método para listar los datos del usuario con el id de usuario pasado por parámetro.
+ * @param {ObjectId} idUsuario ObjectId del usuario para obtener sus datos.
+ * @returns {Object} usuario con sus datos correspondientes.
+ */
 const listarDatosUsuario = async (idUsuario) => {
   try {
     const usuarioEncontrado = await usuarios.findById(idUsuario);
@@ -139,7 +164,11 @@ const listarDatosUsuario = async (idUsuario) => {
     throw nuevoError;
   }
 };
-
+/**
+ * Método para obtener las claves de la colección de usuarios.
+ * Ejemplo: id, nombre, correo,...
+ * @returns {Array} Array con las claves de la colección.
+ */
 const getLlavesUsuarios = async () => {
   try {
     const result = await usuarios.aggregate([
