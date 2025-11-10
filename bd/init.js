@@ -9,6 +9,11 @@ if (process.env.DEBUG) {
 }
 
 const debug = createDebug("Rentari:Init");
+/**
+ * Función que arranca la BBDD pasándole la URL de conexión que apunta a la BBDD.
+ * @returns {Boolean} Devuelve true si la ha podido arrancar o false si ha habido algún error
+ * de conexión.
+ */
 const iniciarConexionBBDD = async () => {
   try {
     if (!process.env.URL_CONEXION)

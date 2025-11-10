@@ -9,7 +9,9 @@ if (process.env.DEBUG) {
 }
 
 const debug = createDebug("Rentari:Index");
-
+/**
+ * Función que invoca otra función para arrancar la BBDD
+ */
 const controladorMain = async () => {
   try {
     const bbddIniciada = await iniciarConexionBBDD();
