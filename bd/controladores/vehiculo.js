@@ -1,7 +1,7 @@
 import { vehiculos } from "../schemas/Vehiculo.js";
 /**
  * Obtener todos los vehiculos disponibles.
- * @returns {Array} listado de vehiculos.
+ * @returns {Promise<Array>} listado de vehiculos.
  */
 const getVehiculos = async () => {
   try {
@@ -50,7 +50,7 @@ const getVehiculos = async () => {
 /**
  * Obtener un vehiculo por su id.
  * @param {ObjectId} idVehiculo ObjectId del vehiculo a obtener.
- * @returns {Object} vehiculo con sus datos.
+ * @returns {Promise<Object>} vehiculo con sus datos.
  */
 const getVehiculoPorId = async (idVehiculo) => {
   try {
@@ -100,7 +100,7 @@ const getVehiculoPorId = async (idVehiculo) => {
 /**
  * Método para reservar un vehiculo hasta que sea confirmado.
  * @param {ObjectId} idVehiculo ObjectId del vehiculo a reservar.
- * @returns {Boolean} si el vehículo ha podido ser reservado.
+ * @returns {Promise<Boolean>} si el vehículo ha podido ser reservado.
  */
 const reservarVehiculo = async (idVehiculo) => {
   try {
@@ -126,7 +126,7 @@ const reservarVehiculo = async (idVehiculo) => {
 };
 /**
  * Método para liberar un vehículo que estaba reservado y finalmente no fue alquilado.
- * @returns {Object} vehículo liberado.
+ * @returns {Promise<Object>} vehículo liberado.
  */
 const liberarVehiculos = async () => {
   try {
@@ -147,7 +147,7 @@ const liberarVehiculos = async () => {
  * estuviera logueado/registrado.
  * @param {ObjectId} idUsuario ObjectId del usuario que desea alquilar el vehículo.
  * @param {ObjectId} idVehiculo ObjectId del vehículo a reservar.
- * @returns {Object} vehículo alquilado.
+ * @returns {Promise<Object>} vehículo alquilado.
  */
 const alquilarVehiculo = async (idUsuario, idVehiculo) => {
   try {
@@ -169,7 +169,7 @@ const alquilarVehiculo = async (idUsuario, idVehiculo) => {
 /**
  * Método para desvincular vehiculos de un usuario que ha podido ser desactivado y anonimizado.
  * @param {ObjectId} idUsuario ObjectId del usuario del cual desvincularemos sus vehículos.
- * @returns {Array} listado de vehículos desvinculados.
+ * @returns {Promise<Array>} listado de vehículos desvinculados.
  */
 const desvincularVehiculosDeUsuario = async (idUsuario) => {
   try {
@@ -189,7 +189,7 @@ const desvincularVehiculosDeUsuario = async (idUsuario) => {
  * Método que nos devolverá un listado de vehículos, con los filtros que le hayamos pasado por parámetro.
  * Entre los parámetros está la cadena de la lupa de vehículos, kilometros, orden, precio, anyo.
  * @param {Object} datosFiltro filtro con los datos que queramos filtrar de los vehículos.
- * @returns {Array} listado de vehículos con los filtros aplicados.
+ * @returns {Promise<Array>} listado de vehículos con los filtros aplicados.
  */
 const filtrarVehiculos = async (datosFiltro) => {
   try {
@@ -271,7 +271,7 @@ const filtrarVehiculos = async (datosFiltro) => {
 /**
  * Método para obtener las claves de la colección de vehículos.
  * Ejemplo: id, nombre, anio,...
- * @returns {Array} array con las claves de la colección.
+ * @returns {Promise<Array>} array con las claves de la colección.
  */
 const getLlavesVehiculos = async () => {
   try {

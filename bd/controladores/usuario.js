@@ -2,7 +2,7 @@ import { Usuario as usuarios } from "../schemas/Usuario.js";
 /**
  * Devuelve un usuario por el correo pasado por parámetro, en caso de que exista.
  * @param {String} correo Correo de un usuario a comprobar.
- * @returns {Object} Usuario encontrado.
+ * @returns {Promise<Object>} Usuario encontrado.
  */
 const getUsuario = async (correo) => {
   try {
@@ -23,7 +23,7 @@ const getUsuario = async (correo) => {
 /**
  * Comprobar si existe el usuario a comprobar.
  * @param {Object} usuario Usuario con mínimo nombre de usuario y correo.
- * @returns {Object} usuario encontrado, en caso de haberlo encontrado.
+ * @returns {Promise<Object>} usuario encontrado, en caso de haberlo encontrado.
  */
 const checkearExisteUsuario = async (usuario) => {
   try {
@@ -46,7 +46,7 @@ const checkearExisteUsuario = async (usuario) => {
 /**
  * Método para crear un usuario.
  * @param {Object} usuario Usuario a crear.
- * @returns {Object} usuario creado.
+ * @returns {Promise<Object>} usuario creado.
  */
 const crearUsuario = async (usuario) => {
   try {
@@ -67,7 +67,7 @@ const crearUsuario = async (usuario) => {
 /**
  * Método para eliminar un usuario.
  * @param {ObjectId} idUsuario ObjectId del usuario a eliminar.
- * @returns {Object} usuario eliminado.
+ * @returns {Promise<Object>} usuario eliminado.
  */
 const eliminarUsuario = async (idUsuario) => {
   try {
@@ -91,7 +91,7 @@ const eliminarUsuario = async (idUsuario) => {
  * Método para "anonimizar" usuario, el cual ha tenido rentings, pero ya vencieron
  * y ha decidido eliminarlo.
  * @param {ObjectId} idUsuario ObjectId del usuario a desactivar.
- * @returns {Object} usuario desactivado.
+ * @returns {Promise<Object>} usuario desactivado.
  */
 const desactivarAnonimizarUsuario = async (idUsuario) => {
   try {
@@ -139,7 +139,7 @@ const desactivarAnonimizarUsuario = async (idUsuario) => {
 /**
  * Método para listar los datos del usuario con el id de usuario pasado por parámetro.
  * @param {ObjectId} idUsuario ObjectId del usuario para obtener sus datos.
- * @returns {Object} usuario con sus datos correspondientes.
+ * @returns {Promise<Object>} usuario con sus datos correspondientes.
  */
 const listarDatosUsuario = async (idUsuario) => {
   try {
@@ -167,7 +167,7 @@ const listarDatosUsuario = async (idUsuario) => {
 /**
  * Método para obtener las claves de la colección de usuarios.
  * Ejemplo: id, nombre, correo,...
- * @returns {Array} Array con las claves de la colección.
+ * @returns {Promise<Array>} Array con las claves de la colección.
  */
 const getLlavesUsuarios = async () => {
   try {

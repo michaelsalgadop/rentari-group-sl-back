@@ -6,7 +6,7 @@ import { RentingPendiente } from "../schemas/RentingPendiente.js";
  * @param {Object} renting Objeto renting que contiene los atributos necesarios para
  * crear un renting pendiente.
  * Entre ellos { idVehiculo, meses, cuota, total }.
- * @returns {Object} objeto renting pendiente creado
+ * @returns {Promise<Object>} objeto renting pendiente creado
  */
 const crearRentingPendiente = async (session_id, renting) => {
   try {
@@ -31,7 +31,7 @@ const crearRentingPendiente = async (session_id, renting) => {
  * Método que comprueba si hay rentings pendientes a la id de sesión pasada por parámetro.
  * @param {String} session_id cadena de 36 caracteres que incluye guiones generada por
  * la randomUUID
- * @returns {Object} devuelve si hay algun renting pendiente de la session pasada por parámetro.
+ * @returns {Promise<Object>} devuelve si hay algun renting pendiente de la session pasada por parámetro.
  */
 const comprobarRentingsPendientes = async (session_id) => {
   try {
@@ -52,7 +52,7 @@ const comprobarRentingsPendientes = async (session_id) => {
  * ya ha sido confirmado y digamos que este método se utiliza de "limpieza" de la colección de rentings pendientes.
  * @param {String} session_id cadena de 36 caracteres que incluye guiones generada por
  * la randomUUID
- * @returns {Boolean} al eliminar el renting pendiente, debe devolver primero el objeto eliminado,
+ * @returns {Promise<Boolean>} al eliminar el renting pendiente, debe devolver primero el objeto eliminado,
  * y nosotros validamos si ese rentingTemporalEliminado tenia valor, si tiene valor es que ha sido
  * eliminado correctamente y devolverá true sino false(por eso las dos exclamaciones !!).
  */
@@ -73,7 +73,7 @@ const eliminarRentingTemporal = async (session_id) => {
 /**
  * Devolvemos todos los nombres de las claves de nuestra colección de Rentings pendientes.
  * Ej: id_vehiculo, meses, cuota, total...
- * @returns {Array} array de claves de rentings pendientes.
+ * @returns {Promise<Array>} array de claves de rentings pendientes.
  */
 const getLlavesRentings = async () => {
   try {

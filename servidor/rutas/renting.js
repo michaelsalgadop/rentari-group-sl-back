@@ -28,7 +28,7 @@ const router = express.Router();
  * @param {number} params.meses - Cantidad de meses del alquiler.
  * @param {number} params.cuota - Monto de la cuota mensual.
  * @param {number} params.total - Total del contrato.
- * @returns {Boolean} - Si el presupuesto ha podido ser modificado y el vehiculo alquilado.
+ * @returns {Promise<Boolean>} - Si el presupuesto ha podido ser modificado y el vehiculo alquilado.
  */
 const procesarRenting = async ({
   idUsuario,

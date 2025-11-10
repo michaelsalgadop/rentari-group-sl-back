@@ -8,7 +8,7 @@ const MODOS_RENTING = {
  * Lo utilizamos para devolver el presupuesto por el id de usuario proporcionado.
  * @param {ObjectId} idUsuario se debe pasar un ObjectId válido de usuario. Si no se
  * marcará como error.
- * @returns {Object} objeto presupuesto del idUsuario indicado.
+ * @returns {Promise<Object>} objeto presupuesto del idUsuario indicado.
  */
 const getPresupuestoUsuario = async (idUsuario) => {
   try {
@@ -31,7 +31,7 @@ const getPresupuestoUsuario = async (idUsuario) => {
 /**
  * Método para crear un nuevo presupuesto al usuario indicado.
  * @param {ObjectId} idUsuario un ObjectId de usuario válido.
- * @returns {Object} presupuesto creado
+ * @returns {Promise<Object>} presupuesto creado
  */
 const crearNuevoPresupuesto = async (idUsuario) => {
   try {
@@ -52,7 +52,7 @@ const crearNuevoPresupuesto = async (idUsuario) => {
 /**
  * Método para eliminar un presupuesto al usuario indicado.
  * @param {ObjectId} idUsuario un ObjectId de usuario válido.
- * @returns {Object} presupuesto eliminado
+ * @returns {Promise<Object>} presupuesto eliminado
  */
 const eliminarPresupuesto = async (idUsuario) => {
   try {
@@ -70,7 +70,7 @@ const eliminarPresupuesto = async (idUsuario) => {
  * @param {Object} datosPresupuesto un objeto que contiene todos los datos
  * necesarios para agregar un vehiculo al presupuesto del usuario.
  * Entre ellos { id_vehiculo, meses, cuota, total, idUsuario }.
- * @returns {Object} presupuesto modificado
+ * @returns {Promise<Object>} presupuesto modificado
  */
 const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
   try {
@@ -114,7 +114,7 @@ const agregarVehiculoAlPresupuesto = async (datosPresupuesto) => {
 /**
  * Método para agregar un vehiculo al presupuesto del usuario indicado.
  * @param {ObjectId} idUsuario ObjectId del usuario a comprobar.
- * @returns {Number} Devuelve:
+ * @returns {Promise<Number>} Devuelve:
  * - 0 Si no ha habido nunca rentings activos ni vencidos.
  * - 1 Si hay rentings activos.
  * - 2 Si los ha habido y ya no los hay.
